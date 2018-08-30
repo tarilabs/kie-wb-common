@@ -1065,6 +1065,20 @@ public class DMNMarshallerTest {
     }
 
     @Test
+    public void test_aVowel() throws IOException {
+        final DMNRuntime runtime = roundTripUnmarshalMarshalThenUnmarshalDMN(this.getClass().getResourceAsStream("/aVowel.dmn"));
+        DMNModel dmnModel = runtime.getModels().get(0);
+
+        DMNContext emptyContext = runtime.newContext();
+        DMNResult dmnResult = runtime.evaluateAll(dmnModel, emptyContext);
+        assertFalse(dmnResult.getMessages().toString(), dmnResult.hasErrors());
+
+        DMNDecisionResult decisionResult = dmnResult.getDecisionResultByName("A Vowel");
+        assertEquals(DecisionEvaluationStatus.SUCCEEDED, decisionResult.getEvaluationStatus());
+        assertEquals("a", decisionResult.getResult());
+    }
+
+    @Test
     public void testOtherElements() throws IOException, XPathExpressionException {
         String original = new Scanner(this.getClass().getResourceAsStream("/dummy.dmn")).useDelimiter("\\A").next();
         DMNMarshaller marshaller = new DMNMarshaller(new XMLEncoderDiagramMetadataMarshaller(), applicationFactoryManager);
